@@ -1,0 +1,30 @@
+# Template file for 'dwm-git'
+pkgname=dwm-git
+version=20181022
+revision=1
+_commit=7a2ee6f7980103ca4fd0c4c5e4e4ff14e8207ade
+hostmakedepends="git"
+makedepends="libXinerama-devel libXft-devel freetype-devel libX11-devel"
+short_desc="A dynamic window manager for X"
+maintainer="robiha <robiha@disroot.org>"
+license="MIT"
+homepage="http://dwm.suckless.org"
+conflicts="dwm"
+
+do_fetch() {
+
+	git clone https://gitlab.com/robiha/dwm.git ${wrksrc}
+	git -C ${wrksrc} reset --hard ${_commit}
+}
+
+do_build() {
+	[ -e ${FILESDIR}/config.h ] && cp ${FILESDIR}/config.h config.h
+	make all
+}
+
+do_install() {
+	make PREFIX=/usr DESTDIR=$DESTDIR install
+	vinstall README 644 usr/share/doc/$pkgname
+	vinstall ${FILESDIR}/dwm.desktop 644 usr/share/xsessions
+	vlicense LICENSE
+}
